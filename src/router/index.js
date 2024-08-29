@@ -7,8 +7,6 @@ import Perfil from '../views/admin/perfil/Perfil.vue'
 import Usuario from '../views/admin/usuario/Usuario.vue'
 import NotFound from '../views/errors/NotFound.vue'
 
-
-
 const router = createRouter({
     history: createWebHashHistory(import.meta.env.BASE_URL),
     routes: [
@@ -16,21 +14,54 @@ const router = createRouter({
         { path: '/servicios', component: Servicio},
         { 
             path: '/login',
-            component: Login 
-        },
-        { 
-            path: '/admin/perfil',
-            component: Perfil
-        },
-        { 
-            path: '/admin/usuario',
-            component: Usuario
+            component: Login,
+            name: 'Login',
+            meta: { redirectIfAuth: true}
         },
         {
+            path: '/admin',
+            component: ,
+            children: [
+                { 
+                    path: '/admin/perfil',
+                    component: Perfil,
+                    name: 'Perfil',
+                    meta: { requireAuth: true}
+                },
+                { 
+                    path: '/admin/usuario',
+                    component: Usuario,
+                    name: 'Usuario',
+                    meta: { requireAuth: true}
+                },
+            ]
+        },
+        
+        {
             path: '/:pathMatch(.*)*',
-            component: NotFound
+            component: NotFound,
+            meta: { requireAuth: true}
         }
     ]
+})
+
+//GUARDS
+router.beforeEach((to, from, next)=>{
+    
+    let  token = localStorage.getItem("access_token");
+    
+    if(to.meta.requireAuth ) {
+        if(!token){
+            return next({name: 'login'})
+        }
+        return next();
+    }
+
+    //console.log(to.meta.redirectIfAuth);
+    if(to.meta.redirectIfAuth && token){
+        return next({name: 'Usuario'});
+    }
+    return next();
 })
 
 export default router;

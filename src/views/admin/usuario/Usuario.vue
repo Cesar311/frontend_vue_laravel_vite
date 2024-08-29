@@ -16,7 +16,8 @@
         <input type="password" id="p" v-model="usuario.password">
         {{ errors.password }}
         <br>
-        <button @click="guardarUsuario">Guardar</button>
+        <button @click="guardarUsuario">{{ usuario.id?'Modificar':'Guardar'}}</button>
+        <button @click="cancelarRegistro">Cancelar</button>
     </div>
     <table border="1">
         <thead>
@@ -59,10 +60,19 @@ onMounted(()=>{
 
 // Funciones o metodos
 async function getUsuarios(){
-    const { data } = await usuarioService.index();
-    
-    console.log(data);
-    usuarios.value = data;
+    try {
+        const { data } = await usuarioService.index();
+        
+        console.log(data);
+        usuarios.value = data;
+    } catch (error) {
+        
+        if(error.response.status == 404) {
+            alert("La página buscada no existe");
+            console.log(error);
+        }
+        
+    }
 
 }
 
@@ -108,4 +118,9 @@ async function funEliminar(user){
     }
 
 }
+
+function cancelarRegistro(){
+    usuario.value = {name: "", email: "", password: ""};
+}
+
 </script>
