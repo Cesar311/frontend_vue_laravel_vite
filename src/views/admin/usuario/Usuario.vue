@@ -5,27 +5,46 @@
        {{ usuario }}
      <!-- {{ errors }}--> 
         <div>
-            <label for="n">NOMBRE</label>
-            <input type="text" id="n" v-model="usuario.name">
-            <InputText id="name" v-model.trim="usuario.name" required="true" autofocus fluid />
+            <label for="n">NOMBRE: </label>
+            <InputText id="n" v-model.trim="usuario.name" required="true" autofocus />
             {{ errors.name }}
             <br>
-            <label for="c">CORREO</label>
-            <input type="email" id="c" v-model="usuario.email">
+            <label for="c">CORREO: </label>
+            <InputText type="email" id="c" v-model="usuario.email" />
             {{ errors.email }}
             <br>
-            <label for="p">CONTRASEÑA</label>
-            <input type="password" id="p" v-model="usuario.password">
+            <label for="p">CONTRASEÑA: </label>
+            <InputText type="password" id="p" v-model="usuario.password" />
             {{ errors.password }}
             <br>
             <button @click="guardarUsuario">{{ usuario.id?'Modificar':'Guardar'}}</button>
             <button @click="cancelarRegistro">Cancelar</button>
         </div>
+        
+        
+
+        <DataTable :value="usuarios" tableStyle="min-width: 50rem">
+            <Column field="id" header="ID"></Column>
+            <Column field="email" header="EMAIL"></Column>
+            <Column field="created_at" header="CREADO EN"></Column>
+
+            <Column :exportable="false" style="min-width: 12rem">
+                <template #body="slotProps">
+                    <Button v-if="!slotProps.data.persona" icon="pi pi-user-edit"  rounded class="mr-2" @click="mostrarDatosPersonales(slotProps.data)" />
+                    <Button v-else icon="pi pi-user-edit" rounded outlined class="mr-2" @click="mostrarDatosPersonales(slotProps.data)" />
+
+                    <Button icon="pi pi-pencil"  rounded class="mr-2" @click="funEditar(slotProps.data)" />
+                    <Button icon="pi pi-trash" outlined rounded severity="danger" @click="funEliminar(slotProps.data)" />
+                </template>
+            </Column>
+
+        </DataTable>
+
         <table border="1">
             <thead>
                 <tr>
                     <td>ID</td>
-                    <td>EMAIL</td>
+                    <td>CORREO</td>
                     <td>CREADO EN</td>
                     <td>ACCION</td>
                 </tr>
@@ -43,13 +62,29 @@
             </tbody>
         </table>
 
-        <DataTable :value="usuarios" tableStyle="min-width: 50rem">
-            <Column field="id" header="ID"></Column>
-            <Column field="email" header="EMAIL"></Column>
-            <Column field="created_at" header="CREADO EN"></Column>
-        </DataTable>
-
     </div>
+
+    <Dialog v-model:visible="visibleDialogPersona" modal header="Actualizar Datos Personales" :style="{ width: '25rem' }">
+    <span class="text-surface-500 dark:text-surface-400 block mb-8">Actualizar datos personales.</span>
+    <div class="flex items-center gap-4 mb-4">
+        <label for="username" class="font-semibold w-24">Nombres</label>
+        <InputText id="username" class="flex-auto" autocomplete="off" v-model="persona.nombres" />
+    </div>
+    <div class="flex items-center gap-4 mb-4">
+        <label for="ap" class="font-semibold w-24">Apellidos</label>
+        <InputText id="ap" class="flex-auto" autocomplete="off" v-model="persona.apellidos" />
+    </div>
+    <div class="flex items-center gap-4 mb-4">
+        <label for="fn" class="font-semibold w-24">fecha_nac</label>
+        <InputText type="date" id="fn" class="flex-auto" autocomplete="off" v-model="persona.fecha_nac" />
+    </div>
+   
+    <div class="flex justify-end gap-2">
+        <Button type="button" label="Cancelar" severity="secondary" @click="visibleDialogPersona = false"></Button>
+        <Button type="button" label="Guardar" @click="asignarDatosPersonales()" ></Button>
+    </div>
+</Dialog>
+
 </template>
 <script setup>
 // Importaciones
@@ -61,6 +96,10 @@ import usuarioService from '../../../services/usuario.service'
 const usuarios = ref([]);
 const usuario = ref({name: "", email: "", password: ""});
 const errors = ref({});
+const visibleDialogPersona = ref(false);
+const usuario_id = ref(-1);
+
+const persona = ref({nombres: "", apellidos: "", fecha_nac: ""})
 
 // Ciclo de vida
 onMounted(()=>{
@@ -133,4 +172,29 @@ function cancelarRegistro(){
     usuario.value = {name: "", email: "", password: ""};
 }
 
+function mostrarDatosPersonales(user){
+    persona.value = {}
+    visibleDialogPersona.value = true; 
+    usuario_id.value = user.id;
+    if(user.persona){
+        persona.value = user.persona
+    }
+}
+
+async function asignarDatosPersonales(){
+
+    try {
+        persona.value.user_id = usuario_id.value;
+        console.log(persona.value);
+
+        await usuarioService.asignarPersona(persona.value);
+
+        visibleDialogPersona.value = false;
+        getUsuarios();
+
+    } catch (error) {
+        alert("Error al asignar datos al usuario")
+    }
+    
+}
 </script>
