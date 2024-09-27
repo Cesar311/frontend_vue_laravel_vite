@@ -41,7 +41,7 @@
                 <Column field="id" header="Cod" sortable style="min-width: 1rem"></Column>
                 <Column field="nombre" header="NOMBRE" sortable style="min-width: 12rem"></Column>
                 <Column header="Imagen">
-                    <template #body="slotProps">
+                    <template #body="slotProps"> 
                         <img :src="`http://localhost:8000/${slotProps.data.imagen}`" :alt="slotProps.data.imagen" class="rounded" style="width: 64px" />
                     </template>
                 </Column>
@@ -166,9 +166,9 @@ const totalRecords = ref(0)
 const getProductos = async (page=1, limit=10) => {
     loading.value = true;
     const {data} = await productoService.listar(page, limit, buscar.value);
-     products.value = data.data
-     totalRecords.value = data.total
-     loading.value = false;
+    products.value = data.data
+    totalRecords.value = data.total
+    loading.value = false;
 }
 
 const onPage = (event) => {

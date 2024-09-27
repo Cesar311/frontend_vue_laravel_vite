@@ -8,7 +8,7 @@ const model = ref([
         label: 'Administrador',
         items: [
             { label: 'Panel', icon: 'pi pi-fw pi-home', to: '/admin' },
-            { label: 'Mi perfil', icon: 'pi pi-fw pi-user', to: '/admin/perfil' }
+            { label: 'Mi Perfil', icon: 'pi pi-fw pi-user', to: '/admin/perfil' }
         ]
     },
     {
@@ -16,13 +16,12 @@ const model = ref([
         items: [
             { label: 'Usuarios', icon: 'pi pi-fw pi-id-card', to: '/admin/usuario' },
             { label: 'Personas', icon: 'pi pi-fw pi-check-square', to: '/admin/persona' },
-
+            
         ]
     },
     {
-        label: 'Gestión Activos Fijos y Almacenes',
+        label: 'Gestión',
         icon: 'pi pi-fw pi-briefcase',
-        to: '/pages',
         items: [
             {
                 label: 'Categoria',
@@ -33,6 +32,22 @@ const model = ref([
                 label: 'Productos',
                 icon: 'pi pi-fw pi-pencil',
                 to: '/admin/producto'
+            }
+        ]
+    },
+    {
+        label: 'Ventas',
+        icon: 'pi pi-fw pi-briefcase',
+        items: [
+            {
+                label: 'Nuevo Pedido',
+                icon: 'pi pi-fw pi-globe',
+                to: '/admin/pedido/nuevo'
+            },
+            {
+                label: 'Lista Pedido',
+                icon: 'pi pi-fw pi-pencil',
+                to: '/admin/pedido'
             }
         ]
     }

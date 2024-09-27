@@ -1,6 +1,6 @@
 <template>
     <div class="card">
-       
+
         <h5>NOMBRE: {{ perfil.name }}</h5>
 
         <h5>CORREO: {{ perfil.email }}</h5>
@@ -9,16 +9,15 @@
         
 
         <button @click="salir()">Salir</button>
-        
     </div>
 </template>
 
 <script setup>
     import { onMounted, ref } from "vue";
-    //import { useRouter } from "vue-router";
-    import authService from "./../../../services/auth.service";
+    import { useRouter } from "vue-router";
+    import authService from "./../../../services/auth.service"
 
-    const router = useRouter();
+    const router = useRouter()
 
     const perfil = ref({});
 
